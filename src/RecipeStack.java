@@ -25,9 +25,9 @@ public class RecipeStack {
         this.recipeStack.clear();
     }
 
-    public void exportToFile() throws RestaurantException{
+    public void exportToFile(String path) throws RestaurantException{
         String delimiter = GlobalVariables.getDelimiter();
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("recipeStack.txt"))){
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(path))){
             recipeStack.forEach((k, v) -> {
                 try {
                     bw.write(k + delimiter + v.getTitle() + "\n");
