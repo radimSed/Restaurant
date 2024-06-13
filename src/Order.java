@@ -9,6 +9,16 @@ public class Order {
     private LocalTime orderedTime;
     private LocalTime fulfilmentTime;
 
+    public Order(int orderId, int tableNumber, int mealId, int amount, OrderStatus status, LocalTime orderedTime, LocalTime fulfilmentTime) {
+        this.orderId = orderId;
+        this.tableNumber = tableNumber;
+        this.mealId = mealId;
+        this.amount = amount;
+        this.status = status;
+        this.orderedTime = orderedTime;
+        this.fulfilmentTime = fulfilmentTime;
+    }
+
     public Order(int orderId, int tableNumber, int mealId, int amount, LocalTime orderedTime) {
 //        id++;
         this.orderId = orderId;

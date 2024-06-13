@@ -1,3 +1,6 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalTime;
 import java.util.*;
 
@@ -55,8 +58,33 @@ public class RestaurantManager {
         return unfinishedOrder;
     }
 
-    public void exportOrderListToFile(String file){
+    public int getHighestId(){
+        int id = 0;
+        for( Order order : orderList){
+            if(order.getOrderId() > id){
+                id = order.getOrderId();
+            }
+        }
+        return  id;
+    }
 
+    public void exportOrderListToFile(String file) throws RestaurantException{
+        String delimiter = GlobalVariables.getDelimiter();
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))){
+            for(Order order : orderList){
+                String line = order.getOrderId() + delimiter + order.getTableNumber() + delimiter + order.getMealId() + delimiter +
+                        order.getAmount() + delimiter + order.getStatus() + delimiter + order.getOrderedTime() + delimiter +
+                        order.getFulfilmentTime() + "\n";
+                bw.write(line);
+            }
+            bw.flush();
+        } catch (IOException e) {
+            throw new RestaurantException(e.getMessage());
+        }
+    }
+
+    public void clearOrderList(){
+        this.orderList.clear();
     }
 }
 

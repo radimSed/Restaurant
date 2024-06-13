@@ -32,6 +32,7 @@ public class RecipeStack {
                 bw.write("" + key + "\n" );
                 recipeStack.get(key).exportToFile(key + ".txt"); //filename for meal export file = key + .txt
             }
+            bw.flush();
         } catch (IOException e) {
             throw new RestaurantException(e.getMessage());
         }

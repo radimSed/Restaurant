@@ -11,6 +11,7 @@ public class Restaurant {
 
         addMealsToRecipeStack(recipeStack);
 
+
         try {
             orderId1 = restaurantManager.createOrder(2, 2222, 2, LocalTime.now().minusMinutes(10));
         } catch (RestaurantException e) {
@@ -35,7 +36,7 @@ public class Restaurant {
             System.err.println(e.getMessage());
         }
 
-        restaurantManager.cancelOrder(orderId2);
+//        restaurantManager.cancelOrder(orderId2);
 
         try{
             restaurantManager.changeOrder(orderId1, OrderStatus.SERVED);
@@ -67,7 +68,16 @@ public class Restaurant {
             System.err.println(e.getMessage());
         }
 
+        try{
+            restaurantManager.exportOrderListToFile(GlobalVariables.getOrderstackfilename());
+        } catch (RestaurantException e){
+            System.err.println(e.getMessage());
+        }
+
         recipeStack.clear();
+        restaurantManager.clearOrderList();
+
+
 
         try {
             recipeStack = RecipeStack.importFromFile(GlobalVariables.getRecipeStackFilename());
