@@ -28,24 +28,13 @@ public class RecipeStack {
     public void exportToFile(String path) throws RestaurantException{
         String delimiter = GlobalVariables.getDelimiter();
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(path))){
-            recipeStack.forEach((k, v) -> {
-                try {
-                    bw.write(k + delimiter + v.getTitle() + "\n");
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
+            for(int key : recipeStack.keySet()){
+                bw.write("" + key + "\n" );
+                recipeStack.get(key).exportToFile(key + ".txt"); //filename for meal export file = key + .txt
+            }
         } catch (IOException e) {
             throw new RestaurantException(e.getMessage());
         }
-
-        recipeStack.values().forEach(v -> {
-            try {
-                v.exportToFile();
-            } catch (RestaurantException e) {
-                throw new RuntimeException(e);
-            }
-        });
     }
 
     public static RecipeStack importFromFile(String path) throws RestaurantException{
@@ -55,9 +44,9 @@ public class RecipeStack {
             Scanner scanner = new Scanner(br);
             while(scanner.hasNextLine()){
                 String line = scanner.nextLine();
-                String parts[] = line.split(delimiter);
-                Recipe recipe = Recipe.importFromFile(parts[1] + ".txt");
-                recipeStack1.addMeal(Integer.parseInt(parts[0]), recipe);
+//                String parts[] = line.split(delimiter);
+                Recipe recipe = Recipe.importFromFile(line + ".txt");
+                recipeStack1.addMeal(Integer.parseInt(line), recipe);
             }
             return recipeStack1;
         } catch (IOException e){

@@ -59,10 +59,10 @@ public class Recipe {
         this.pictureName = pictureName;
     }
 
-    public void exportToFile() throws RestaurantException{
+    public void exportToFile(String filename) throws RestaurantException{
         //filename = title of the meal + .txt
         String delimiter = GlobalVariables.getDelimiter();
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(this.title + ".txt"))){
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename))){
             bw.write(this.title + delimiter + this.price + delimiter + this.preparationTime + delimiter + this.pictureName);
         } catch (IOException e){
             throw new RestaurantException(e.getMessage());
