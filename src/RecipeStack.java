@@ -53,4 +53,13 @@ public class RecipeStack {
             throw new RestaurantException(e.getMessage());
         }
     }
+
+    public boolean isMealAvailable(int mealId){
+        for(int meal : recipeStack.keySet()){
+            if( meal == mealId ){
+                return true;
+            }
+        }
+        return false;
+    }
 }
