@@ -36,7 +36,7 @@ public class Restaurant {
             System.err.println(e.getMessage());
         }
 
-//        restaurantManager.cancelOrder(orderId2);
+        restaurantManager.cancelOrder(orderId2);
 
         try{
             restaurantManager.changeOrder(orderId1, OrderStatus.SERVED);
@@ -77,15 +77,25 @@ public class Restaurant {
         recipeStack.clear();
         restaurantManager.clearOrderList();
 
-
-
         try {
             recipeStack = RecipeStack.importFromFile(GlobalVariables.getRecipeStackFilename());
         } catch (RestaurantException e){
             System.err.println(e.getMessage());
         }
 
+
+        try{
+            restaurantManager.importOrderListFromFile(GlobalVariables.getOrderstackfilename());
+        } catch (RestaurantException e){
+            System.err.println(e.getMessage());
+        }
+
         System.out.println(recipeStack.getNumberOfMeals());
+        System.out.println(restaurantManager.getTotalNumberOfOrders());
+        System.out.println(restaurantManager.getStaticOrderId());
+        System.out.println(restaurantManager.getNumberOfUnfinishedOrders());
+
+        restaurantManager.printSortedOrderList();
 
         System.out.println("Hotovo");
     }

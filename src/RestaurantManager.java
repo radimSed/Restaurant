@@ -1,6 +1,4 @@
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalTime;
 import java.util.*;
 
@@ -58,7 +56,7 @@ public class RestaurantManager {
         return unfinishedOrder;
     }
 
-    public int getHighestId(){
+    public int getHighestOrderId(){
         int id = 0;
         for( Order order : orderList){
             if(order.getOrderId() > id){
@@ -83,8 +81,76 @@ public class RestaurantManager {
         }
     }
 
+    public void importOrderListFromFile(String file) throws RestaurantException{
+        String delimiter = GlobalVariables.getDelimiter();
+        try(BufferedReader br = new BufferedReader(new FileReader(file))){
+            Scanner scanner = new Scanner(br);
+            Order order;
+            int orderId = 0, tableNumber = 0, mealId = 0, amount = 0;
+            OrderStatus status;
+            LocalTime orderedTime, fulfilmentTime;
+            String line;
+
+            while(scanner.hasNextLine()) {
+                line = scanner.nextLine();
+                String parts[] = line.split(delimiter);
+                orderId = Integer.parseInt(parts[0]);
+                tableNumber = Integer.parseInt(parts[1]);
+                mealId = Integer.parseInt(parts[2]);
+                amount = Integer.parseInt(parts[3]);
+                status = OrderStatus.valueOf(parts[4]);
+                orderedTime = LocalTime.parse(parts[5]);
+                if(parts[6].equals("null")){
+                    fulfilmentTime = null;
+                } else {
+                    fulfilmentTime = LocalTime.parse(parts[6]);
+                }
+                order = new Order(orderId, tableNumber, mealId, amount, status, orderedTime, fulfilmentTime);
+                orderList.add(order);
+            }
+            staticOrderId = getHighestOrderId();
+        } catch (IOException e){
+            throw new RestaurantException(e.getMessage());
+        }
+    }
     public void clearOrderList(){
         this.orderList.clear();
+    }
+
+    public int getTotalNumberOfOrders(){
+        return this.orderList.size();
+    }
+
+    public int getStaticOrderId(){
+        return staticOrderId;
+    }
+
+    private List<Order> getOrdersSortedOrderTime(){
+        List<Order> sortedOrderList = new ArrayList<>();
+        sortedOrderList.addAll(this.orderList);
+        sortedOrderList.sort(Comparator.comparing(Order::getOrderedTime));
+        return sortedOrderList;
+    }
+
+    public void printSortedOrderList(){
+        String delimiter = GlobalVariables.getDelimiter();
+        List<Order> sortedOrderList = getOrdersSortedOrderTime();
+        for(Order order : sortedOrderList){
+            System.out.println(order.getOrderId() + delimiter + order.getOrderedTime());
+        }
+    }
+
+    public LocalTime getAverageFulfilmentTime(){
+
+    }
+
+    private LocalTime getFulfilmentTime(Order order){
+        if( order.getFulfilmentTime() != null ) {
+            return order.getFulfilmentTime().minusMinutes(order.getOrderedTime());
+        } else {
+            return LocalTime.now().minusHours(1);
+        }
+
     }
 }
 
