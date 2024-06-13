@@ -1,8 +1,7 @@
 import java.time.LocalTime;
 
 public class Order {
-    private static int id = 0;
-    private int orderId;  //should be unigue in whole system
+    private int orderId;
     private int tableNumber;
     private int mealId;
     private int amount;
@@ -10,19 +9,15 @@ public class Order {
     private LocalTime orderedTime;
     private LocalTime fulfilmentTime;
 
-    public Order(int tableNumber, int mealId, int amount) {
-        id++;
-        this.orderId = id;
+    public Order(int orderId, int tableNumber, int mealId, int amount, LocalTime orderedTime) {
+//        id++;
+        this.orderId = orderId;
         this.tableNumber = tableNumber;
         this.mealId = mealId;
         this.amount = amount;
         this.status = OrderStatus.ORDERED;
-        this.orderedTime = LocalTime.now();
+        this.orderedTime = orderedTime;
 
-    }
-
-    public int getId(){
-        return this.orderId;
     }
 
     public int getTableNumber() {

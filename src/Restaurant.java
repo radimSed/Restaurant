@@ -1,16 +1,18 @@
 import java.math.BigDecimal;
+import java.time.LocalTime;
 
 public class Restaurant {
 
 
     public static void main(String[] args) {
+        int orderId1 = 0, orderId2 = 0, orderId3 = 0, orderId4 = 0;
         RecipeStack recipeStack  = new RecipeStack();
         RestaurantManager restaurantManager = new RestaurantManager(recipeStack);
 
         addMealsToRecipeStack(recipeStack);
 
         try {
-            restaurantManager.createOrder(new Order(2, 2222, 2));
+            orderId1 = restaurantManager.createOrder(2, 2222, 2, LocalTime.now().minusMinutes(10));
         } catch (RestaurantException e) {
             System.err.println(e.getMessage());
         }
@@ -22,10 +24,42 @@ public class Restaurant {
         }
 
         try {
-            restaurantManager.createOrder(new Order(1, 6666, 3));
+            orderId2 = restaurantManager.createOrder(1, 6666, 3,LocalTime.now().minusMinutes(5));
         } catch (RestaurantException e) {
             System.err.println(e.getMessage());
         }
+
+        try {
+            orderId3 = restaurantManager.createOrder(1, 22, 3,LocalTime.now().minusMinutes(12));
+        } catch (RestaurantException e) {
+            System.err.println(e.getMessage());
+        }
+
+        restaurantManager.cancelOrder(orderId2);
+
+        try{
+            restaurantManager.changeOrder(orderId1, OrderStatus.SERVED);
+        } catch (RestaurantException e) {
+            System.err.println(e.getMessage());
+        }
+
+        try{
+            restaurantManager.changeOrder(orderId3, OrderStatus.PAID);
+        } catch (RestaurantException e) {
+            System.err.println(e.getMessage());
+        }
+
+        System.out.println(restaurantManager.getNumberOfUnfinishedOrders());
+
+        recipeStack.removeMeal(11);
+
+        try {
+            orderId4 = restaurantManager.createOrder(3, 11, 4,LocalTime.now());
+        } catch (RestaurantException e) {
+            System.err.println(e.getMessage());
+        }
+
+
 
         try{
             recipeStack.exportToFile(GlobalVariables.getRecipeStackFilename());
