@@ -1,9 +1,52 @@
 import java.math.BigDecimal;
 
 public class Restaurant {
-    public static void main(String[] args) {
-        RecipeStack recipeStack = new RecipeStack();
 
+
+    public static void main(String[] args) {
+        RecipeStack recipeStack  = new RecipeStack();
+        RestaurantManager restaurantManager = new RestaurantManager(recipeStack);
+
+        addMealsToRecipeStack(recipeStack);
+
+        try {
+            restaurantManager.createOrder(new Order(2, 2222, 2));
+        } catch (RestaurantException e) {
+            System.err.println(e.getMessage());
+        }
+
+        try{
+            recipeStack.addMeal(6666, new Recipe("Svíčková s knedlíkem", BigDecimal.valueOf(125), 15));
+        } catch (RestaurantException e) {
+            System.err.println(e.getMessage());
+        }
+
+        try {
+            restaurantManager.createOrder(new Order(1, 6666, 3));
+        } catch (RestaurantException e) {
+            System.err.println(e.getMessage());
+        }
+
+        try{
+            recipeStack.exportToFile(GlobalVariables.getRecipeStackFilename());
+        } catch (RestaurantException e){
+            System.err.println(e.getMessage());
+        }
+
+        recipeStack.clear();
+
+        try {
+            recipeStack = RecipeStack.importFromFile(GlobalVariables.getRecipeStackFilename());
+        } catch (RestaurantException e){
+            System.err.println(e.getMessage());
+        }
+
+        System.out.println(recipeStack.getNumberOfMeals());
+
+        System.out.println("Hotovo");
+    }
+
+    private static void addMealsToRecipeStack(RecipeStack recipeStack) {
         try {
             recipeStack.addMeal(1111, new Recipe("Vídeňský řízek v trojobalu s bramborem", BigDecimal.valueOf(120), 15));
         } catch (RestaurantException e){
@@ -45,23 +88,5 @@ public class Restaurant {
         } catch (RestaurantException e){
             System.err.println(e.getMessage());
         }
-
-        try{
-            recipeStack.exportToFile(GlobalVariables.getRecipeStackFilename());
-        } catch (RestaurantException e){
-            System.err.println(e.getMessage());
-        }
-
-        recipeStack.clear();
-
-        try {
-            recipeStack = RecipeStack.importFromFile(GlobalVariables.getRecipeStackFilename());
-        } catch (RestaurantException e){
-            System.err.println(e.getMessage());
-        }
-
-        System.out.println(recipeStack.getNumberOfMeals());
-
-        System.out.println("Hotovo");
     }
 }
