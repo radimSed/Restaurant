@@ -1,4 +1,5 @@
 import java.io.*;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
@@ -12,7 +13,7 @@ public class RestaurantManager {
     }
 
 //    public int createOrder(Order order) throws RestaurantException{
-    public int createOrder(int tableNumber, int mealId, int amount, LocalTime orderedTime) throws RestaurantException{
+    public int createOrder(int tableNumber, int mealId, int amount, LocalDateTime orderedTime) throws RestaurantException{
         if(recipeStack.isMealAvailable(mealId)){
             staticOrderId++;
             this.orderList.add(new Order(staticOrderId, tableNumber, mealId, amount,orderedTime));
@@ -27,7 +28,7 @@ public class RestaurantManager {
         if( order != null){
             order.setStatus(status);
             if (status == OrderStatus.SERVED || status == OrderStatus.PAID){
-                order.setFulfilmentTime(LocalTime.now());
+                order.setFulfilmentTime(LocalDateTime.now());
             }
         } else throw new RestaurantException("Order with Id " + id + "not found");
     }
@@ -88,7 +89,7 @@ public class RestaurantManager {
             Order order;
             int orderId = 0, tableNumber = 0, mealId = 0, amount = 0;
             OrderStatus status;
-            LocalTime orderedTime, fulfilmentTime;
+            LocalDateTime orderedTime, fulfilmentTime;
             String line;
 
             while(scanner.hasNextLine()) {
@@ -99,11 +100,11 @@ public class RestaurantManager {
                 mealId = Integer.parseInt(parts[2]);
                 amount = Integer.parseInt(parts[3]);
                 status = OrderStatus.valueOf(parts[4]);
-                orderedTime = LocalTime.parse(parts[5]);
+                orderedTime = LocalDateTime.parse(parts[5]);
                 if(parts[6].equals("null")){
                     fulfilmentTime = null;
                 } else {
-                    fulfilmentTime = LocalTime.parse(parts[6]);
+                    fulfilmentTime = LocalDateTime.parse(parts[6]);
                 }
                 order = new Order(orderId, tableNumber, mealId, amount, status, orderedTime, fulfilmentTime);
                 orderList.add(order);
@@ -140,17 +141,16 @@ public class RestaurantManager {
         }
     }
 
-    public LocalTime getAverageFulfilmentTime(){
+//    public LocalTime getAverageFulfilmentTime(){
+//
+//    }
 
-    }
-
-    private LocalTime getFulfilmentTime(Order order){
-        if( order.getFulfilmentTime() != null ) {
-            return order.getFulfilmentTime().minusMinutes(order.getOrderedTime());
-        } else {
-            return LocalTime.now().minusHours(1);
-        }
-
-    }
+//    private LocalTime getFulfilmentTime(Order order){
+//        if( order.getFulfilmentTime() != null ) {
+//            return 10;
+//        } else {
+//            return LocalTime.now().minusHours(1);
+//        }
+//    }
 }
 

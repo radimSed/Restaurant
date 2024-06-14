@@ -1,5 +1,5 @@
 import java.math.BigDecimal;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 public class Restaurant {
 
@@ -13,7 +13,7 @@ public class Restaurant {
 
 
         try {
-            orderId1 = restaurantManager.createOrder(2, 2222, 2, LocalTime.now().minusMinutes(10));
+            orderId1 = restaurantManager.createOrder(2, 2222, 2, LocalDateTime.now().minusMinutes(10));
         } catch (RestaurantException e) {
             System.err.println(e.getMessage());
         }
@@ -25,13 +25,13 @@ public class Restaurant {
         }
 
         try {
-            orderId2 = restaurantManager.createOrder(1, 6666, 3,LocalTime.now().minusMinutes(5));
+            orderId2 = restaurantManager.createOrder(1, 6666, 3,LocalDateTime.now().minusMinutes(5));
         } catch (RestaurantException e) {
             System.err.println(e.getMessage());
         }
 
         try {
-            orderId3 = restaurantManager.createOrder(1, 22, 3,LocalTime.now().minusMinutes(12));
+            orderId3 = restaurantManager.createOrder(1, 22, 3,LocalDateTime.now().minusMinutes(12));
         } catch (RestaurantException e) {
             System.err.println(e.getMessage());
         }
@@ -55,7 +55,7 @@ public class Restaurant {
         recipeStack.removeMeal(11);
 
         try {
-            orderId4 = restaurantManager.createOrder(3, 11, 4,LocalTime.now());
+            orderId4 = restaurantManager.createOrder(3, 11, 4,LocalDateTime.now());
         } catch (RestaurantException e) {
             System.err.println(e.getMessage());
         }

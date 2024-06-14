@@ -1,3 +1,4 @@
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class Order {
@@ -6,10 +7,10 @@ public class Order {
     private int mealId;
     private int amount;
     private OrderStatus status;
-    private LocalTime orderedTime;
-    private LocalTime fulfilmentTime;
+    private LocalDateTime orderedTime;
+    private LocalDateTime fulfilmentTime;
 
-    public Order(int orderId, int tableNumber, int mealId, int amount, OrderStatus status, LocalTime orderedTime, LocalTime fulfilmentTime) {
+    public Order(int orderId, int tableNumber, int mealId, int amount, OrderStatus status, LocalDateTime orderedTime, LocalDateTime fulfilmentTime) {
         this.orderId = orderId;
         this.tableNumber = tableNumber;
         this.mealId = mealId;
@@ -19,7 +20,7 @@ public class Order {
         this.fulfilmentTime = fulfilmentTime;
     }
 
-    public Order(int orderId, int tableNumber, int mealId, int amount, LocalTime orderedTime) {
+    public Order(int orderId, int tableNumber, int mealId, int amount, LocalDateTime orderedTime) {
 //        id++;
         this.orderId = orderId;
         this.tableNumber = tableNumber;
@@ -62,19 +63,19 @@ public class Order {
         this.status = status;
     }
 
-    public LocalTime getOrderedTime() {
+    public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
 
-    public void setOrderedTime(LocalTime orderedTime) {
+    public void setOrderedTime(LocalDateTime orderedTime) {
         this.orderedTime = orderedTime;
     }
 
-    public LocalTime getFulfilmentTime() {
+    public LocalDateTime getFulfilmentTime() {
         return fulfilmentTime;
     }
 
-    public void setFulfilmentTime(LocalTime fulfilmentTime) {
+    public void setFulfilmentTime(LocalDateTime fulfilmentTime) {
         this.fulfilmentTime = fulfilmentTime;
     }
 
