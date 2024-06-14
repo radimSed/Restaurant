@@ -1,5 +1,6 @@
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 
 public class Order {
     private int orderId;
@@ -82,4 +83,13 @@ public class Order {
     public int getOrderId(){
         return this.orderId;
     }
+
+    public long getFulfilmentPeriod() {
+        if( this.fulfilmentTime != null ) {
+            return this.orderedTime.until(this.fulfilmentTime, ChronoUnit.MINUTES);
+        } else {
+            return -1; //if the order is still being processed, return -1
+        }
+    }
+
 }

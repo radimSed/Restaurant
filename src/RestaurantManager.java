@@ -1,6 +1,8 @@
 import java.io.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class RestaurantManager {
@@ -30,19 +32,19 @@ public class RestaurantManager {
             if (status == OrderStatus.SERVED || status == OrderStatus.PAID){
                 order.setFulfilmentTime(LocalDateTime.now());
             }
-        } else throw new RestaurantException("Order with Id " + id + "not found");
+        } else throw new RestaurantException("Order with Id " + id + " not found");
     }
 
-    public Order getOrderById(int id){
+    public Order getOrderById(int id) throws RestaurantException{
         for( Order order : orderList){
             if(order.getOrderId() == id){
                 return order;
             }
         }
-        return null;
+        throw new RestaurantException("Order with Id " + id + " not found");
     }
 
-    public void cancelOrder(int id){
+    public void cancelOrder(int id) throws RestaurantException{
         Order order = getOrderById(id);
         orderList.remove(order);
     }
@@ -141,16 +143,22 @@ public class RestaurantManager {
         }
     }
 
-//    public LocalTime getAverageFulfilmentTime(){
-//
-//    }
+    public long getAverageFulfilmentTime(){
+        long totalMinutes = 0;
+        long numberOfOrders = 0;
+        if (orderList.size() == 0) {
+            return 0;
+        }
 
-//    private LocalTime getFulfilmentTime(Order order){
-//        if( order.getFulfilmentTime() != null ) {
-//            return 10;
-//        } else {
-//            return LocalTime.now().minusHours(1);
-//        }
-//    }
+        for(Order order : orderList){
+            long processTime = order.getFulfilmentPeriod();
+            if (processTime != -1){ //we do not count orders which are still being processed
+                totalMinutes += processTime;
+                numberOfOrders++;
+            }
+        }
+        return totalMinutes/numberOfOrders;
+    }
+
 }
 

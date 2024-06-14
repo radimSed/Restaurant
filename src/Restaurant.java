@@ -36,7 +36,17 @@ public class Restaurant {
             System.err.println(e.getMessage());
         }
 
-        restaurantManager.cancelOrder(orderId2);
+        try{
+            restaurantManager.cancelOrder(orderId2);
+        } catch (RestaurantException e) {
+            System.err.println(e.getMessage());
+        }
+
+        try{
+            restaurantManager.cancelOrder(orderId2); //to try cancel one order twice
+        } catch (RestaurantException e) {
+            System.err.println(e.getMessage());
+        }
 
         try{
             restaurantManager.changeOrder(orderId1, OrderStatus.SERVED);
@@ -96,6 +106,30 @@ public class Restaurant {
         System.out.println(restaurantManager.getNumberOfUnfinishedOrders());
 
         restaurantManager.printSortedOrderList();
+
+
+        try{
+            System.out.println(restaurantManager.getOrderById(orderId1).getFulfilmentPeriod());
+        } catch (RestaurantException e){
+            System.err.println(e.getMessage());
+        }
+        try{
+            System.out.println(restaurantManager.getOrderById(orderId2).getFulfilmentPeriod());
+        } catch (RestaurantException e){
+            System.err.println(e.getMessage());
+        }
+        try{
+            System.out.println(restaurantManager.getOrderById(orderId3).getFulfilmentPeriod());
+        } catch (RestaurantException e){
+            System.err.println(e.getMessage());
+        }
+        try{
+            System.out.println(restaurantManager.getOrderById(orderId4).getFulfilmentPeriod());
+        } catch (RestaurantException e){
+            System.err.println(e.getMessage());
+        }
+
+        System.out.println(restaurantManager.getAverageFulfilmentTime());
 
         System.out.println("Hotovo");
     }
