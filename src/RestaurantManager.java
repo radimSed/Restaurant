@@ -1,7 +1,9 @@
 import java.io.*;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -158,6 +160,42 @@ public class RestaurantManager {
             }
         }
         return totalMinutes/numberOfOrders;
+    }
+
+    public String exportOrdersPerTable(int tableId) throws RestaurantException{
+        if(tableId < 0){
+            throw new RestaurantException("Negative numbering for table not allowed. You entered " + tableId);
+        }
+
+        DateTimeFormatter myTimeFormat = DateTimeFormatter.ofPattern("HH:mm");
+        String output, text;
+        int itemNumber = 0;
+        if(tableId < 10) {
+            output = "** Orders for table nr.  " + tableId + " **\n****\n";
+        } else {
+            output = "** Orders for table nr. " + tableId + " **\n****\n";
+        }
+        for(Order order : orderList){
+            if(order.getTableNumber() == tableId){
+                itemNumber++;
+                String mealTitle = recipeStack.getMeal(order.getMealId()).getTitle();
+                String amount = order.getAmount() + "x";
+                String price = recipeStack.getMeal(order.getMealId()).getPrice().multiply(BigDecimal.valueOf(order.getAmount())).toString();
+                String times = order.getOrderedTime().format(myTimeFormat) + "-" + order.getFulfilmentTime().format(myTimeFormat);
+                String isPaid;
+                if (order.getStatus() == OrderStatus.PAID) {
+                    isPaid = "paid";
+                } else {
+                    isPaid = "";
+                }
+
+                text = itemNumber + ". " + mealTitle + " " + amount +" (" + price + " Kč):\t" + times + "\t" + isPaid + "\n";
+                output += text;
+            }
+        }
+        output += "******";
+
+        return output;
     }
 
 }

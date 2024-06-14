@@ -88,7 +88,7 @@ public class Restaurant {
         restaurantManager.clearOrderList();
 
         try {
-            recipeStack = RecipeStack.importFromFile(GlobalVariables.getRecipeStackFilename());
+            recipeStack.importFromFile(GlobalVariables.getRecipeStackFilename());
         } catch (RestaurantException e){
             System.err.println(e.getMessage());
         }
@@ -130,6 +130,24 @@ public class Restaurant {
         }
 
         System.out.println(restaurantManager.getAverageFulfilmentTime());
+
+        try{
+            System.out.println(restaurantManager.exportOrdersPerTable(-2));
+        } catch (RestaurantException e){
+            System.err.println(e.getMessage());
+        }
+
+        try{
+            System.out.println(restaurantManager.exportOrdersPerTable(2));
+        } catch (RestaurantException e){
+            System.err.println(e.getMessage());
+        }
+
+        try{
+            System.out.println(restaurantManager.exportOrdersPerTable(1));
+        } catch (RestaurantException e){
+            System.err.println(e.getMessage());
+        }
 
         System.out.println("Hotovo");
     }
