@@ -6,12 +6,10 @@ public class Restaurant {
 
     public static void main(String[] args) {
         int orderId1 = 0, orderId2 = 0, orderId3 = 0, orderId4 = 0;
-        RecipeStack recipeStack  = new RecipeStack();
-        OrderList orderList = new OrderList();
 
-        RestaurantManager restaurantManager = new RestaurantManager(recipeStack, orderList);
+        RestaurantManager restaurantManager = new RestaurantManager();
 
-        addMealsToRecipeStack(recipeStack);
+        addMealsToRecipeStack(restaurantManager);
 
 
         try {
@@ -21,7 +19,7 @@ public class Restaurant {
         }
 
         try{
-            recipeStack.addMeal(6666, new Recipe("Svíčková s knedlíkem", BigDecimal.valueOf(125), 15));
+            restaurantManager.addMealToRecipeStack(6666, new Recipe("Svíčková s knedlíkem", BigDecimal.valueOf(125), 15));
         } catch (RestaurantException e) {
             System.err.println(e.getMessage());
         }
@@ -64,7 +62,7 @@ public class Restaurant {
 
         System.out.println(restaurantManager.getNumberOfUnfinishedOrders());
 
-        recipeStack.removeMeal(11);
+        restaurantManager.removeMealfromStack(11);
 
         try {
             orderId4 = restaurantManager.createOrder(3, 11, 4,LocalDateTime.now());
@@ -86,7 +84,7 @@ public class Restaurant {
             System.err.println(e.getMessage());
         }
 
-        System.out.println(recipeStack.getNumberOfMeals());
+        System.out.println(restaurantManager.getNumberOfMeals());
         System.out.println(restaurantManager.getTotalNumberOfOrders());
         System.out.println(restaurantManager.getStaticOrderId());
         System.out.println(restaurantManager.getNumberOfUnfinishedOrders());
@@ -138,45 +136,45 @@ public class Restaurant {
         System.out.println("Hotovo");
     }
 
-    private static void addMealsToRecipeStack(RecipeStack recipeStack) {
+    private static void addMealsToRecipeStack(RestaurantManager manager) {
         try {
-            recipeStack.addMeal(1111, new Recipe("Vídeňský řízek v trojobalu s bramborem", BigDecimal.valueOf(120), 15));
+            manager.addMealToRecipeStack(1111, new Recipe("Vídeňský řízek v trojobalu s bramborem", BigDecimal.valueOf(120), 15));
         } catch (RestaurantException e){
             System.err.println(e.getMessage());
         }
 
         try {
-            recipeStack.addMeal(2222, new Recipe("Boloňské špagety", BigDecimal.valueOf(110), 8, "bolonske-spagety-01"));
+            manager.addMealToRecipeStack(2222, new Recipe("Boloňské špagety", BigDecimal.valueOf(110), 8, "bolonske-spagety-01"));
         } catch (RestaurantException e){
             System.err.println(e.getMessage());
         }
 
         try {
-            recipeStack.addMeal(3333, new Recipe("Bramborák", BigDecimal.valueOf(50), 7, "bramborak-01"));
+            manager.addMealToRecipeStack(3333, new Recipe("Bramborák", BigDecimal.valueOf(50), 7, "bramborak-01"));
         } catch (RestaurantException e){
             System.err.println(e.getMessage());
         }
 
         try {
-            recipeStack.addMeal(4444, new Recipe("T-bone steak z argentinského býka", BigDecimal.valueOf(210), 20, "T-bone-steak"));
+            manager.addMealToRecipeStack(4444, new Recipe("T-bone steak z argentinského býka", BigDecimal.valueOf(210), 20, "T-bone-steak"));
         } catch (RestaurantException e){
             System.err.println(e.getMessage());
         }
 
         try {
-            recipeStack.addMeal(33, new Recipe("Kola-Lokova limonáda", BigDecimal.valueOf(25), 0, "kola-loka-01"));
+            manager.addMealToRecipeStack(33, new Recipe("Kola-Lokova limonáda", BigDecimal.valueOf(25), 0, "kola-loka-01"));
         } catch (RestaurantException e){
             System.err.println(e.getMessage());
         }
 
         try {
-            recipeStack.addMeal(11, new Recipe("Pivo 10", BigDecimal.valueOf(35), 2, "pivo"));
+            manager.addMealToRecipeStack(11, new Recipe("Pivo 10", BigDecimal.valueOf(35), 2, "pivo"));
         } catch (RestaurantException e){
             System.err.println(e.getMessage());
         }
 
         try {
-            recipeStack.addMeal(22, new Recipe("Birel", BigDecimal.valueOf(30), 0, "birel"));
+            manager.addMealToRecipeStack(22, new Recipe("Birel", BigDecimal.valueOf(30), 0, "birel"));
         } catch (RestaurantException e){
             System.err.println(e.getMessage());
         }

@@ -8,15 +8,14 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class RestaurantManager {
-    RecipeStack recipeStack;
-    OrderList orderList;
+        RecipeStack recipeStack  = new RecipeStack();
+        OrderList orderList = new OrderList();
 
-    public RestaurantManager(RecipeStack recipeStack, OrderList orderlist) {
-        this.recipeStack = recipeStack;
-        this.orderList = orderlist;
+
+    public void addMealToRecipeStack(int code, Recipe recipe){
+        recipeStack.addMeal(code, recipe);
     }
 
-//    public int createOrder(Order order) throws RestaurantException{
     public int createOrder(int tableNumber, int mealId, int amount, LocalDateTime orderedTime) throws RestaurantException{
         if(recipeStack.isMealAvailable(mealId)){
             return orderList.createOrder(tableNumber, mealId, amount, orderedTime);
@@ -24,6 +23,11 @@ public class RestaurantManager {
             throw new RestaurantException("Meal id " + mealId + " not available, order not created");
         }
     }
+
+    public void removeMealfromStack(int codeNumber) {
+        this.recipeStack.removeMeal(codeNumber);
+    }
+
 
     public void changeOrder(int id, OrderStatus status) throws RestaurantException{
         this.orderList.changeOrder(id, status);
@@ -45,58 +49,15 @@ public class RestaurantManager {
         return this.orderList.getHighestOrderId();
     }
 
-//    public void exportOrderListToFile(String file) throws RestaurantException{
-//        String delimiter = GlobalVariables.getDelimiter();
-//        try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))){
-//            for(Order order : orderList){
-//                String line = order.getOrderId() + delimiter + order.getTableNumber() + delimiter + order.getMealId() + delimiter +
-//                        order.getAmount() + delimiter + order.getStatus() + delimiter + order.getOrderedTime() + delimiter +
-//                        order.getFulfilmentTime() + "\n";
-//                bw.write(line);
-//            }
-//            bw.flush();
-//        } catch (IOException e) {
-//            throw new RestaurantException(e.getMessage());
-//        }
-//    }
+    public int getNumberOfMeals(){
+        return recipeStack.getNumberOfMeals();
+    }
 
     public void exportDataToFiles() throws RestaurantException{
         this.recipeStack.exportToFile(GlobalVariables.getRecipeStackFilename());
         this.orderList.exportOrderListToFile(GlobalVariables.getOrderstackfilename());
     }
 
-//    public void importOrderListFromFile(String file) throws RestaurantException{
-//        String delimiter = GlobalVariables.getDelimiter();
-//        try(BufferedReader br = new BufferedReader(new FileReader(file))){
-//            Scanner scanner = new Scanner(br);
-//            Order order;
-//            int orderId = 0, tableNumber = 0, mealId = 0, amount = 0;
-//            OrderStatus status;
-//            LocalDateTime orderedTime, fulfilmentTime;
-//            String line;
-//
-//            while(scanner.hasNextLine()) {
-//                line = scanner.nextLine();
-//                String parts[] = line.split(delimiter);
-//                orderId = Integer.parseInt(parts[0]);
-//                tableNumber = Integer.parseInt(parts[1]);
-//                mealId = Integer.parseInt(parts[2]);
-//                amount = Integer.parseInt(parts[3]);
-//                status = OrderStatus.valueOf(parts[4]);
-//                orderedTime = LocalDateTime.parse(parts[5]);
-//                if(parts[6].equals("null")){
-//                    fulfilmentTime = null;
-//                } else {
-//                    fulfilmentTime = LocalDateTime.parse(parts[6]);
-//                }
-//                order = new Order(orderId, tableNumber, mealId, amount, status, orderedTime, fulfilmentTime);
-//                orderList.add(order);
-//            }
-//            staticOrderId = getHighestOrderId();
-//        } catch (IOException e){
-//            throw new RestaurantException(e.getMessage());
-//        }
-//    }
     public void importDataFromFiles() throws RestaurantException{
         this.recipeStack.importFromFile(GlobalVariables.getRecipeStackFilename());
         this.orderList.importOrderListFromFile(GlobalVariables.getOrderstackfilename());
