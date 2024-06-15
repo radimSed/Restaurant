@@ -7,7 +7,9 @@ public class Restaurant {
     public static void main(String[] args) {
         int orderId1 = 0, orderId2 = 0, orderId3 = 0, orderId4 = 0;
         RecipeStack recipeStack  = new RecipeStack();
-        RestaurantManager restaurantManager = new RestaurantManager(recipeStack);
+        OrderList orderList = new OrderList();
+
+        RestaurantManager restaurantManager = new RestaurantManager(recipeStack, orderList);
 
         addMealsToRecipeStack(recipeStack);
 
@@ -70,32 +72,16 @@ public class Restaurant {
             System.err.println(e.getMessage());
         }
 
-
-
         try{
-            recipeStack.exportToFile(GlobalVariables.getRecipeStackFilename());
+            restaurantManager.exportDataToFiles();
         } catch (RestaurantException e){
             System.err.println(e.getMessage());
         }
 
-        try{
-            restaurantManager.exportOrderListToFile(GlobalVariables.getOrderstackfilename());
-        } catch (RestaurantException e){
-            System.err.println(e.getMessage());
-        }
-
-        recipeStack.clear();
-        restaurantManager.clearOrderList();
-
-        try {
-            recipeStack.importFromFile(GlobalVariables.getRecipeStackFilename());
-        } catch (RestaurantException e){
-            System.err.println(e.getMessage());
-        }
-
+        restaurantManager.clearSystem();
 
         try{
-            restaurantManager.importOrderListFromFile(GlobalVariables.getOrderstackfilename());
+            restaurantManager.importDataFromFiles();
         } catch (RestaurantException e){
             System.err.println(e.getMessage());
         }
