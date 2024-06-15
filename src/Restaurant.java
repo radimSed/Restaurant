@@ -71,7 +71,7 @@ public class Restaurant {
         }
 
         try{
-            restaurantManager.exportDataToFiles();
+            restaurantManager.exportDataToFiles(GlobalVariables.getRecipeStackFilename(), GlobalVariables.getOrderstackfilename());
         } catch (RestaurantException e){
             System.err.println(e.getMessage());
         }
@@ -79,7 +79,7 @@ public class Restaurant {
         restaurantManager.clearSystem();
 
         try{
-            restaurantManager.importDataFromFiles();
+            restaurantManager.importDataFromFiles(GlobalVariables.getRecipeStackFilename(), GlobalVariables.getOrderstackfilename());
         } catch (RestaurantException e){
             System.err.println(e.getMessage());
         }

@@ -53,14 +53,14 @@ public class RestaurantManager {
         return recipeStack.getNumberOfMeals();
     }
 
-    public void exportDataToFiles() throws RestaurantException{
-        this.recipeStack.exportToFile(GlobalVariables.getRecipeStackFilename());
-        this.orderList.exportOrderListToFile(GlobalVariables.getOrderstackfilename());
+    public void exportDataToFiles(String recipeStackFile, String orderStackFile) throws RestaurantException{
+        this.recipeStack.exportToFile(recipeStackFile);
+        this.orderList.exportOrderListToFile(orderStackFile);
     }
 
-    public void importDataFromFiles() throws RestaurantException{
-        this.recipeStack.importFromFile(GlobalVariables.getRecipeStackFilename());
-        this.orderList.importOrderListFromFile(GlobalVariables.getOrderstackfilename());
+    public void importDataFromFiles(String recipeStackFile, String orderStackFile) throws RestaurantException{
+        this.recipeStack.importFromFile(recipeStackFile);
+        this.orderList.importOrderListFromFile(orderStackFile);
 
     }
 
