@@ -1,9 +1,9 @@
 import java.io.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Scanner;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
+import java.util.*;
 
 public class OrderList {
     private List<Order> orderList = new ArrayList<>();
@@ -24,12 +24,12 @@ public class OrderList {
         throw new RestaurantException("Order with Id " + id + " not found");
     }
 
-    public void changeOrder(int id, OrderStatus status) throws RestaurantException{
+    public void changeOrder(int id, OrderStatus status, LocalDateTime time) throws RestaurantException{
         Order order = getOrderById(id);
         if( order != null){
             order.setStatus(status);
             if (status == OrderStatus.SERVED || status == OrderStatus.PAID){
-                order.setFulfilmentTime(LocalDateTime.now());
+                order.setFulfilmentTime(time);
             }
         } else throw new RestaurantException("Order with Id " + id + " not found");
     }
@@ -42,7 +42,7 @@ public class OrderList {
     public int getNumberOfUnfinishedOrders(){
         int unfinishedOrder = 0;
         for( Order order : orderList) {
-            if(order.getStatus() != OrderStatus.PAID){
+            if(order.getStatus() != OrderStatus.PAID){ //order is considered to be finished when it is paid
                 unfinishedOrder++;
             }
         }
@@ -75,36 +75,55 @@ public class OrderList {
     }
 
     public void importOrderListFromFile(String file) throws RestaurantException{
-        String delimiter = GlobalVariables.getDelimiter();
         try(BufferedReader br = new BufferedReader(new FileReader(file))){
             Scanner scanner = new Scanner(br);
-            Order order;
-            int orderId = 0, tableNumber = 0, mealId = 0, amount = 0;
-            OrderStatus status;
-            LocalDateTime orderedTime, fulfilmentTime;
-            String line;
+            int lineNumber = 0;
 
             while(scanner.hasNextLine()) {
-                line = scanner.nextLine();
-                String parts[] = line.split(delimiter);
-                orderId = Integer.parseInt(parts[0]);
-                tableNumber = Integer.parseInt(parts[1]);
-                mealId = Integer.parseInt(parts[2]);
-                amount = Integer.parseInt(parts[3]);
-                status = OrderStatus.valueOf(parts[4]);
-                orderedTime = LocalDateTime.parse(parts[5]);
-                if(parts[6].equals("null")){
-                    fulfilmentTime = null;
-                } else {
-                    fulfilmentTime = LocalDateTime.parse(parts[6]);
-                }
-                order = new Order(orderId, tableNumber, mealId, amount, status, orderedTime, fulfilmentTime);
+                lineNumber++;
+                Order order = processLine(scanner.nextLine(), lineNumber, file);
                 orderList.add(order);
             }
             staticOrderId = getHighestOrderId();
         } catch (IOException e){
             throw new RestaurantException(e.getMessage());
         }
+    }
+
+    private Order processLine(String line, int lineNumber, String file) throws RestaurantException{
+        String delimiter = GlobalVariables.getDelimiter();
+        int orderId = 0, tableNumber = 0, mealId = 0, amount = 0;
+        OrderStatus status;
+        LocalDateTime orderedTime, fulfilmentTime;
+
+        String parts[] = line.split(delimiter);
+
+        //each line must consist of 7 parts
+        if(parts.length != 7 ){
+            String errorMessage = "Invalid input on line " + lineNumber + " of file " + file + ".\n";
+            errorMessage += "Check the input data in the file.";
+            throw new RestaurantException(errorMessage);
+        }
+
+        try {
+            orderId = Integer.parseInt(parts[0]);
+            tableNumber = Integer.parseInt(parts[1]);
+            mealId = Integer.parseInt(parts[2]);
+            amount = Integer.parseInt(parts[3]);
+            status = OrderStatus.valueOf(parts[4]);
+            orderedTime = LocalDateTime.parse(parts[5]);
+            if (parts[6].equals("null")) {
+                fulfilmentTime = null;
+            } else {
+                fulfilmentTime = LocalDateTime.parse(parts[6]);
+            }
+        } catch (IllegalArgumentException | DateTimeParseException e) {
+            String errorMessage = e.getMessage();
+            errorMessage += "\nInvalid data format on line " + lineNumber + " of file " + file + ".";
+            throw new RestaurantException(errorMessage);
+        }
+
+        return new Order(orderId, tableNumber, mealId, amount, status, orderedTime, fulfilmentTime);
     }
 
     public void clearOrderList(){
@@ -119,7 +138,7 @@ public class OrderList {
         return staticOrderId;
     }
 
-    public List<Order> getOrdersSortedOrderTime(){
+    public List<Order> getOrdersSortedOrderedTime(){
         List<Order> sortedOrderList = new ArrayList<>();
         sortedOrderList.addAll(this.orderList);
         sortedOrderList.sort(Comparator.comparing(Order::getOrderedTime));
@@ -140,7 +159,11 @@ public class OrderList {
                 numberOfOrders++;
             }
         }
-        return totalMinutes/numberOfOrders;
+        if( numberOfOrders != 0) {
+            return totalMinutes / numberOfOrders;
+        } else {
+            return 0;
+        }
     }
 
     public List<Order> getOrdersPerTable(int tableId) {
@@ -154,11 +177,15 @@ public class OrderList {
         return ordersPerTable;
     }
 
-
-
-
-
-
-
-
+    public Set<Integer> getTodaysMealsIds(){
+        Set<Integer> todaysMealsIds = new HashSet<>();
+        for(Order order : this.orderList){
+            boolean isAfter = (order.getOrderedTime().isAfter((LocalDateTime.of(LocalDate.now(), LocalTime.of(0,0,1)))));
+            boolean isBefore = (order.getOrderedTime().isBefore((LocalDateTime.of(LocalDate.now(), LocalTime.of(23,59,59)))));
+            if( isAfter && isBefore) {
+                todaysMealsIds.add(order.getMealId());
+            }
+        }
+        return todaysMealsIds;
+    }
 }

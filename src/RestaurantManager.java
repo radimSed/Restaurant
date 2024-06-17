@@ -1,10 +1,6 @@
-import java.io.*;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class RestaurantManager {
@@ -24,29 +20,12 @@ public class RestaurantManager {
         }
     }
 
-    public void removeMealfromStack(int codeNumber) {
-        this.recipeStack.removeMeal(codeNumber);
-    }
-
-
-    public void changeOrder(int id, OrderStatus status) throws RestaurantException{
-        this.orderList.changeOrder(id, status);
-    }
-
-    public Order getOrderById(int id) throws RestaurantException{
-        return this.orderList.getOrderById(id);
-    }
-
-    public void cancelOrder(int id) throws RestaurantException{
-        this.orderList.cancelOrder(id);
+    public void changeOrder(int id, OrderStatus status, LocalDateTime time) throws RestaurantException{
+        this.orderList.changeOrder(id, status, time);
     }
 
     public int getNumberOfUnfinishedOrders(){
         return this.orderList.getNumberOfUnfinishedOrders();
-    }
-
-    public int getHighestOrderId(){
-        return this.orderList.getHighestOrderId();
     }
 
     public int getNumberOfMeals(){
@@ -59,7 +38,13 @@ public class RestaurantManager {
     }
 
     public void importDataFromFiles(String recipeStackFile, String orderStackFile) throws RestaurantException{
-        this.recipeStack.importFromFile(recipeStackFile);
+        try {
+            this.recipeStack.importFromFile(recipeStackFile);
+        } catch (RestaurantException e) {
+            String errorMessage = e.getMessage();
+            errorMessage += "\nError reading data from  " + recipeStackFile + ".";
+            throw new RestaurantException(errorMessage);
+        }
         this.orderList.importOrderListFromFile(orderStackFile);
 
     }
@@ -73,15 +58,11 @@ public class RestaurantManager {
         return this.orderList.getTotalNumberOfOrders();
     }
 
-    public int getStaticOrderId(){
-        return this.orderList.getStaticOrderId();
-    }
-
     public void printSortedOrderList(){
         String delimiter = GlobalVariables.getDelimiter();
-        List<Order> sortedOrderList = this.orderList.getOrdersSortedOrderTime();
+        List<Order> sortedOrderList = this.orderList.getOrdersSortedOrderedTime();
         for(Order order : sortedOrderList){
-            System.out.println(order.getOrderId() + delimiter + order.getOrderedTime());
+            System.out.println(order.getOrderId() + delimiter + order.getOrderedTime().format(GlobalVariables.getMYTIMEFORMAT()));
         }
     }
 
@@ -89,37 +70,67 @@ public class RestaurantManager {
         return this.orderList.getAverageFulfilmentTime();
     }
 
-    public String exportOrdersPerTable(int tableId) throws RestaurantException{
-        if(tableId < 0){
+    public String exportOrdersPerTable(int tableId) throws RestaurantException {
+        if (tableId < 0) {
             throw new RestaurantException("Negative numbering for table not allowed. You entered " + tableId);
         }
-
-        DateTimeFormatter myTimeFormat = DateTimeFormatter.ofPattern("HH:mm");
         String output, text;
         int itemNumber = 0;
+
         if(tableId < 10) {
             output = "** Orders for table nr.  " + tableId + " **\n****\n";
         } else {
             output = "** Orders for table nr. " + tableId + " **\n****\n";
         }
+
         for(Order order : this.orderList.getOrdersPerTable(tableId)){
             itemNumber++;
-            String mealTitle = recipeStack.getMeal(order.getMealId()).getTitle();
-            String amount = order.getAmount() + "x";
-            String price = recipeStack.getMeal(order.getMealId()).getPrice().multiply(BigDecimal.valueOf(order.getAmount())).toString();
-            String times = order.getOrderedTime().format(myTimeFormat) + "-" + order.getFulfilmentTime().format(myTimeFormat);
-            String isPaid;
-            if (order.getStatus() == OrderStatus.PAID) {
-                isPaid = "paid";
-            } else {
-                isPaid = "";
-            }
-            text = itemNumber + ". " + mealTitle + " " + amount +" (" + price + " Kč):\t" + times + "\t" + isPaid + "\n";
+            text = itemNumber + ". " + printOrderInfo(order);
             output += text;
         }
         output += "******";
 
         return output;
+    }
+
+    private String printOrderInfo(Order order){
+        DateTimeFormatter myTimeFormat = GlobalVariables.getMYTIMEFORMAT();
+        String mealTitle = recipeStack.getMeal(order.getMealId()).getTitle();
+        String amount = order.getAmount() + "x";
+        String price = recipeStack.getMeal(order.getMealId()).getPrice().multiply(BigDecimal.valueOf(order.getAmount())).toString();
+        String orderedTime = order.getOrderedTime().format(myTimeFormat);
+        String fulfilmentTime;
+        if(order.getFulfilmentTime() == null){
+            fulfilmentTime = "NotServedYet";
+        } else {
+            fulfilmentTime = order.getFulfilmentTime().format(myTimeFormat);
+        }
+        String times = orderedTime + "-" + fulfilmentTime;
+        String isPaid;
+        if (order.getStatus() == OrderStatus.PAID) {
+            isPaid = "paid";
+        } else {
+            isPaid = "";
+        }
+        return mealTitle + " " + amount +" (" + price + " Kč):\t" + times + "\t" + isPaid + "\n";
+
+    }
+
+    public Set<Recipe> getSetOfTodaysMeals(){
+        Set<Integer> todaysMealsIds = this.orderList.getTodaysMealsIds();
+        Set<Recipe> todaysMealsOrdered = new HashSet<>();
+        for(Integer mealId : todaysMealsIds){
+            todaysMealsOrdered.add(recipeStack.getMeal(mealId));
+        }
+        return todaysMealsOrdered;
+    }
+
+    public void printMealsOrderedToday(){
+        Set<Integer> todaysMealsOrdered = this.orderList.getTodaysMealsIds();
+
+        for(int mealId:todaysMealsOrdered){
+            System.out.println(mealId + GlobalVariables.getDelimiter() + recipeStack.getMeal(mealId).getTitle());
+        }
     }
 
 }

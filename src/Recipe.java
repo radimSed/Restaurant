@@ -27,20 +27,8 @@ public class Recipe {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public BigDecimal getPrice() {
         return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public int getPreparationTime() {
-        return preparationTime;
     }
 
     public void setPreparationTime(int preparationTime) throws RestaurantException{
@@ -49,14 +37,6 @@ public class Recipe {
         } else {
             this.preparationTime = preparationTime;
         }
-    }
-
-    public String getPictureName() {
-        return pictureName;
-    }
-
-    public void setPictureName(String pictureName) {
-        this.pictureName = pictureName;
     }
 
     public void exportToFile(String filename) throws RestaurantException{

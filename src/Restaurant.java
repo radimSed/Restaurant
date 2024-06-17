@@ -1,182 +1,105 @@
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.*;
 
 public class Restaurant {
-
+    private static List<Integer> ordersIds = new ArrayList<>();
 
     public static void main(String[] args) {
-        int orderId1 = 0, orderId2 = 0, orderId3 = 0, orderId4 = 0;
-
         RestaurantManager restaurantManager = new RestaurantManager();
 
-        addMealsToRecipeStack(restaurantManager);
-
-
-        try {
-            orderId1 = restaurantManager.createOrder(2, 2222, 2, LocalDateTime.now().minusMinutes(10));
-        } catch (RestaurantException e) {
-            System.err.println(e.getMessage());
-        }
-
         try{
-            restaurantManager.addMealToRecipeStack(6666, new Recipe("Svíčková s knedlíkem", BigDecimal.valueOf(125), 15));
-        } catch (RestaurantException e) {
-            System.err.println(e.getMessage());
-        }
+            addMealsToRecipeStack(restaurantManager);
+            makeOrders(restaurantManager);
+            changeOrders(restaurantManager);
+            printInfo(restaurantManager);
 
-        try {
-            orderId2 = restaurantManager.createOrder(1, 6666, 3,LocalDateTime.now().minusMinutes(5));
-        } catch (RestaurantException e) {
-            System.err.println(e.getMessage());
-        }
-
-        try {
-            orderId3 = restaurantManager.createOrder(1, 22, 3,LocalDateTime.now().minusMinutes(12));
-        } catch (RestaurantException e) {
-            System.err.println(e.getMessage());
-        }
-
-        try{
-            restaurantManager.cancelOrder(orderId2);
-        } catch (RestaurantException e) {
-            System.err.println(e.getMessage());
-        }
-
-        try{
-            restaurantManager.cancelOrder(orderId2); //to try cancel one order twice
-        } catch (RestaurantException e) {
-            System.err.println(e.getMessage());
-        }
-
-        try{
-            restaurantManager.changeOrder(orderId1, OrderStatus.SERVED);
-        } catch (RestaurantException e) {
-            System.err.println(e.getMessage());
-        }
-
-        try{
-            restaurantManager.changeOrder(orderId3, OrderStatus.PAID);
-        } catch (RestaurantException e) {
-            System.err.println(e.getMessage());
-        }
-
-        System.out.println(restaurantManager.getNumberOfUnfinishedOrders());
-
-        restaurantManager.removeMealfromStack(11);
-
-        try {
-            orderId4 = restaurantManager.createOrder(3, 11, 4,LocalDateTime.now());
-        } catch (RestaurantException e) {
-            System.err.println(e.getMessage());
-        }
-
-        try{
+            //Data saving to disk
             restaurantManager.exportDataToFiles(GlobalVariables.getRecipeStackFilename(), GlobalVariables.getOrderstackfilename());
-        } catch (RestaurantException e){
-            System.err.println(e.getMessage());
-        }
+            System.out.println("Data saved to disk");
 
-        restaurantManager.clearSystem();
+            //        system clearance
+            restaurantManager.clearSystem();
+            System.out.println("==Data cleared from system==============================================================");
 
-        try{
+            printInfo(restaurantManager);
+
+            //Data loading from disk
             restaurantManager.importDataFromFiles(GlobalVariables.getRecipeStackFilename(), GlobalVariables.getOrderstackfilename());
+            System.out.println("==Data loaded from disk into system=====================================================");
+
+            printInfo(restaurantManager);
+
         } catch (RestaurantException e){
             System.err.println(e.getMessage());
         }
+        System.out.println("********");
+        System.out.println("* Done *");
+        System.out.println("********");
 
-        System.out.println(restaurantManager.getNumberOfMeals());
-        System.out.println(restaurantManager.getTotalNumberOfOrders());
-        System.out.println(restaurantManager.getStaticOrderId());
-        System.out.println(restaurantManager.getNumberOfUnfinishedOrders());
-
-        restaurantManager.printSortedOrderList();
-
-
-        try{
-            System.out.println(restaurantManager.getOrderById(orderId1).getFulfilmentPeriod());
-        } catch (RestaurantException e){
-            System.err.println(e.getMessage());
-        }
-        try{
-            System.out.println(restaurantManager.getOrderById(orderId2).getFulfilmentPeriod());
-        } catch (RestaurantException e){
-            System.err.println(e.getMessage());
-        }
-        try{
-            System.out.println(restaurantManager.getOrderById(orderId3).getFulfilmentPeriod());
-        } catch (RestaurantException e){
-            System.err.println(e.getMessage());
-        }
-        try{
-            System.out.println(restaurantManager.getOrderById(orderId4).getFulfilmentPeriod());
-        } catch (RestaurantException e){
-            System.err.println(e.getMessage());
-        }
-
-        System.out.println(restaurantManager.getAverageFulfilmentTime());
-
-        try{
-            System.out.println(restaurantManager.exportOrdersPerTable(-2));
-        } catch (RestaurantException e){
-            System.err.println(e.getMessage());
-        }
-
-        try{
-            System.out.println(restaurantManager.exportOrdersPerTable(2));
-        } catch (RestaurantException e){
-            System.err.println(e.getMessage());
-        }
-
-        try{
-            System.out.println(restaurantManager.exportOrdersPerTable(1));
-        } catch (RestaurantException e){
-            System.err.println(e.getMessage());
-        }
-
-        System.out.println("Hotovo");
     }
 
-    private static void addMealsToRecipeStack(RestaurantManager manager) {
-        try {
-            manager.addMealToRecipeStack(1111, new Recipe("Vídeňský řízek v trojobalu s bramborem", BigDecimal.valueOf(120), 15));
-        } catch (RestaurantException e){
-            System.err.println(e.getMessage());
-        }
+    private static void printInfo(RestaurantManager restaurantManager) throws RestaurantException{
+        System.out.println();
+        System.out.println(restaurantManager.exportOrdersPerTable(15));
 
-        try {
-            manager.addMealToRecipeStack(2222, new Recipe("Boloňské špagety", BigDecimal.valueOf(110), 8, "bolonske-spagety-01"));
-        } catch (RestaurantException e){
-            System.err.println(e.getMessage());
-        }
+        System.out.println();
+        System.out.println(restaurantManager.exportOrdersPerTable(2));
 
-        try {
-            manager.addMealToRecipeStack(3333, new Recipe("Bramborák", BigDecimal.valueOf(50), 7, "bramborak-01"));
-        } catch (RestaurantException e){
-            System.err.println(e.getMessage());
-        }
+        System.out.println();
+        System.out.println("Number of meals: " + restaurantManager.getNumberOfMeals());
+        System.out.println("Total number of orders: " + restaurantManager.getTotalNumberOfOrders());
+        System.out.println("Number of unfinished orders: " + restaurantManager.getNumberOfUnfinishedOrders());
 
-        try {
-            manager.addMealToRecipeStack(4444, new Recipe("T-bone steak z argentinského býka", BigDecimal.valueOf(210), 20, "T-bone-steak"));
-        } catch (RestaurantException e){
-            System.err.println(e.getMessage());
-        }
+        System.out.println();
+        System.out.println("Orders sorted by ordered time:");
+        restaurantManager.printSortedOrderList();
+        System.out.println("Average fulfilment time: " + restaurantManager.getAverageFulfilmentTime());
 
-        try {
-            manager.addMealToRecipeStack(33, new Recipe("Kola-Lokova limonáda", BigDecimal.valueOf(25), 0, "kola-loka-01"));
-        } catch (RestaurantException e){
-            System.err.println(e.getMessage());
-        }
+        System.out.println();
+        System.out.println("Meals ordered today: ");
+        restaurantManager.printMealsOrderedToday();
+        System.out.println();
+    }
 
-        try {
-            manager.addMealToRecipeStack(11, new Recipe("Pivo 10", BigDecimal.valueOf(35), 2, "pivo"));
-        } catch (RestaurantException e){
-            System.err.println(e.getMessage());
-        }
+    private static void changeOrders(RestaurantManager restaurantManager) throws RestaurantException{
+        //Change of status - order "Kofola" for table 15 to Served
+            //index 2 = orderId 3
+            restaurantManager.changeOrder(ordersIds.get(2), OrderStatus.SERVED, LocalDateTime.now().minusMinutes(6));
+        //Change of status - order for table 2 to Paid
+            //index 5 = orderId 6
+            restaurantManager.changeOrder(ordersIds.get(5), OrderStatus.PAID, LocalDateTime.now().minusMinutes(10));
+            //index 3 = orderId 4
+            restaurantManager.changeOrder(ordersIds.get(3), OrderStatus.PAID, LocalDateTime.now());
+            //index 4 = orderId 5
+            restaurantManager.changeOrder(ordersIds.get(4), OrderStatus.PAID, LocalDateTime.now());
+    }
 
-        try {
-            manager.addMealToRecipeStack(22, new Recipe("Birel", BigDecimal.valueOf(30), 0, "birel"));
-        } catch (RestaurantException e){
-            System.err.println(e.getMessage());
-        }
+    private static void makeOrders(RestaurantManager manager) throws RestaurantException {
+        //order for table 15(according to task)
+            //index 0, id 1
+            ordersIds.add(manager.createOrder(15, 1111, 2, LocalDateTime.now().minusMinutes(11)));
+            //index 1, id 2
+            ordersIds.add(manager.createOrder(15, 2222, 2,LocalDateTime.now().minusMinutes(11)));
+            //index 2, id 3
+            ordersIds.add(manager.createOrder(15, 33, 2,LocalDateTime.now().minusMinutes(11)));
+
+        //order for table 2
+            //index 3 = orderId 4
+            ordersIds.add(manager.createOrder(2, 3333, 3, LocalDateTime.now().minusMinutes(15)));
+            //index 4 = orderId 5
+            ordersIds.add(manager.createOrder(2, 2222, 3,LocalDateTime.now().minusMinutes(15)));
+            //index 5 = orderId 6
+            ordersIds.add(manager.createOrder(2, 33, 3,LocalDateTime.now().minusMinutes(13)));
+    }
+    private static void addMealsToRecipeStack(RestaurantManager manager) throws RestaurantException {
+           manager.addMealToRecipeStack(1111, new Recipe("Kuřecí řízek obalovaný 150g", BigDecimal.valueOf(120), 15));
+           manager.addMealToRecipeStack(2222, new Recipe("Hranolky 150g", BigDecimal.valueOf(40), 10, "Hranolky01"));
+           manager.addMealToRecipeStack(3333, new Recipe("Pstruh na víně", BigDecimal.valueOf(135), 15, "pstruh-01"));
+           manager.addMealToRecipeStack(4444, new Recipe("T-bone steal z argentinského býka 200g", BigDecimal.valueOf(235), 25));
+           manager.addMealToRecipeStack(5555, new Recipe("Bramborák 150g", BigDecimal.valueOf(55), 15));
+           manager.addMealToRecipeStack(11, new Recipe("Pivo 10", BigDecimal.valueOf(30), 3, "Pivo"));
+           manager.addMealToRecipeStack(12, new Recipe("Birel", BigDecimal.valueOf(30), 0, "Birel"));
+           manager.addMealToRecipeStack(33, new Recipe("Kofola 0.5l", BigDecimal.valueOf(30), 3, "kofola-01"));
     }
 }

@@ -1,5 +1,4 @@
 import java.io.*;
-import java.math.BigDecimal;
 import java.util.*;
 
 public class RecipeStack {
@@ -39,18 +38,13 @@ public class RecipeStack {
     }
 
     public void importFromFile(String path) throws RestaurantException {
-        String delimiter = GlobalVariables.getDelimiter();
-        //RecipeStack recipeStack1 = new RecipeStack();
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             Scanner scanner = new Scanner(br);
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-//                String parts[] = line.split(delimiter);
                 Recipe recipe = Recipe.importFromFile(line + ".txt");
-                //recipeStack1.addMeal(Integer.parseInt(line), recipe);
                 this.addMeal(Integer.parseInt(line), recipe);
             }
-//            return recipeStack1;
         } catch (IOException e) {
             throw new RestaurantException(e.getMessage());
         }

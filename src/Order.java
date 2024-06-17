@@ -1,5 +1,4 @@
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
 public class Order {
@@ -36,24 +35,12 @@ public class Order {
         return tableNumber;
     }
 
-    public void setTableNumber(int tableNumber) {
-        this.tableNumber = tableNumber;
-    }
-
     public int getMealId() {
         return mealId;
     }
 
-    public void setMealId(int mealId) {
-        this.mealId = mealId;
-    }
-
     public int getAmount() {
         return amount;
-    }
-
-    public void setAmount(int amount) {
-        this.amount = amount;
     }
 
     public OrderStatus getStatus() {
@@ -66,10 +53,6 @@ public class Order {
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public void setOrderedTime(LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
     }
 
     public LocalDateTime getFulfilmentTime() {
