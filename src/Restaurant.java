@@ -48,7 +48,7 @@ public class Restaurant {
 
         System.out.println();
         System.out.println("Počet jídel: " + restaurantManager.getNumberOfMeals());
-        System.out.println("Celkový počet obhednávek: " + restaurantManager.getTotalNumberOfOrders());
+        System.out.println("Celkový počet objednávek: " + restaurantManager.getTotalNumberOfOrders());
         System.out.println("Počet nevyřízených objednávek: " + restaurantManager.getNumberOfUnfinishedOrders());
 
         System.out.println();
