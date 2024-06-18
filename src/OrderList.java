@@ -21,7 +21,7 @@ public class OrderList {
                 return order;
             }
         }
-        throw new RestaurantException("Order with Id " + id + " not found");
+        throw new RestaurantException("Objednávka č. " + id + " nenalezena");
     }
 
     public void changeOrder(int id, OrderStatus status, LocalDateTime time) throws RestaurantException{
@@ -31,7 +31,7 @@ public class OrderList {
             if (status == OrderStatus.SERVED || status == OrderStatus.PAID){
                 order.setFulfilmentTime(time);
             }
-        } else throw new RestaurantException("Order with Id " + id + " not found");
+        } else throw new RestaurantException("Objednávka č. " + id + " nenalezena");
     }
 
     public void cancelOrder(int id) throws RestaurantException{
@@ -100,8 +100,8 @@ public class OrderList {
 
         //each line must consist of 7 parts
         if(parts.length != 7 ){
-            String errorMessage = "Invalid input on line " + lineNumber + " of file " + file + ".\n";
-            errorMessage += "Check the input data in the file.";
+            String errorMessage = "Neplatná data na řádku " + lineNumber + " souboru " + file + ".\n";
+            errorMessage += "Zkontroluj data v daném souboru.";
             throw new RestaurantException(errorMessage);
         }
 
@@ -119,7 +119,7 @@ public class OrderList {
             }
         } catch (IllegalArgumentException | DateTimeParseException e) {
             String errorMessage = e.getMessage();
-            errorMessage += "\nInvalid data format on line " + lineNumber + " of file " + file + ".";
+            errorMessage += "\nNeplatný formát dat na řádku " + lineNumber + " souboru " + file + ".";
             throw new RestaurantException(errorMessage);
         }
 
@@ -132,10 +132,6 @@ public class OrderList {
 
     public int getTotalNumberOfOrders(){
         return this.orderList.size();
-    }
-
-    public int getStaticOrderId(){
-        return staticOrderId;
     }
 
     public List<Order> getOrdersSortedOrderedTime(){

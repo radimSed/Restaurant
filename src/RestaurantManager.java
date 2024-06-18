@@ -16,7 +16,7 @@ public class RestaurantManager {
         if(recipeStack.isMealAvailable(mealId)){
             return orderList.createOrder(tableNumber, mealId, amount, orderedTime);
         } else {
-            throw new RestaurantException("Meal id " + mealId + " not available, order not created");
+            throw new RestaurantException("Jídlo č. " + mealId + " není dostupné, objednávka nebyla vytvořena.");
         }
     }
 
@@ -42,7 +42,7 @@ public class RestaurantManager {
             this.recipeStack.importFromFile(recipeStackFile);
         } catch (RestaurantException e) {
             String errorMessage = e.getMessage();
-            errorMessage += "\nError reading data from  " + recipeStackFile + ".";
+            errorMessage += "\nChyba čtení dat ze souboru " + recipeStackFile + ".";
             throw new RestaurantException(errorMessage);
         }
         this.orderList.importOrderListFromFile(orderStackFile);
@@ -72,15 +72,15 @@ public class RestaurantManager {
 
     public String exportOrdersPerTable(int tableId) throws RestaurantException {
         if (tableId < 0) {
-            throw new RestaurantException("Negative numbering for table not allowed. You entered " + tableId);
+            throw new RestaurantException("Záporné číslo pro identifikaci stolu není povoleno. Zadal jsi " + tableId);
         }
         String output, text;
         int itemNumber = 0;
 
         if(tableId < 10) {
-            output = "** Orders for table nr.  " + tableId + " **\n****\n";
+            output = "** Objednávky pro stůl č.  " + tableId + " **\n****\n";
         } else {
-            output = "** Orders for table nr. " + tableId + " **\n****\n";
+            output = " Objednávky pro stůl č. " + tableId + " **\n****\n";
         }
 
         for(Order order : this.orderList.getOrdersPerTable(tableId)){
@@ -101,28 +101,19 @@ public class RestaurantManager {
         String orderedTime = order.getOrderedTime().format(myTimeFormat);
         String fulfilmentTime;
         if(order.getFulfilmentTime() == null){
-            fulfilmentTime = "NotServedYet";
+            fulfilmentTime = "Neservírováno";
         } else {
             fulfilmentTime = order.getFulfilmentTime().format(myTimeFormat);
         }
         String times = orderedTime + "-" + fulfilmentTime;
         String isPaid;
         if (order.getStatus() == OrderStatus.PAID) {
-            isPaid = "paid";
+            isPaid = "zaplacena";
         } else {
             isPaid = "";
         }
         return mealTitle + " " + amount +" (" + price + " Kč):\t" + times + "\t" + isPaid + "\n";
 
-    }
-
-    public Set<Recipe> getSetOfTodaysMeals(){
-        Set<Integer> todaysMealsIds = this.orderList.getTodaysMealsIds();
-        Set<Recipe> todaysMealsOrdered = new HashSet<>();
-        for(Integer mealId : todaysMealsIds){
-            todaysMealsOrdered.add(recipeStack.getMeal(mealId));
-        }
-        return todaysMealsOrdered;
     }
 
     public void printMealsOrderedToday(){

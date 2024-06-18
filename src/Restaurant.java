@@ -16,26 +16,26 @@ public class Restaurant {
 
             //Data saving to disk
             restaurantManager.exportDataToFiles(GlobalVariables.getRecipeStackFilename(), GlobalVariables.getOrderstackfilename());
-            System.out.println("Data saved to disk");
+            System.out.println("Data uložena na disk");
 
             //        system clearance
             restaurantManager.clearSystem();
-            System.out.println("==Data cleared from system==============================================================");
+            System.out.println("==Data smazána ze systému===============================================================");
 
             printInfo(restaurantManager);
 
             //Data loading from disk
             restaurantManager.importDataFromFiles(GlobalVariables.getRecipeStackFilename(), GlobalVariables.getOrderstackfilename());
-            System.out.println("==Data loaded from disk into system=====================================================");
+            System.out.println("==Data načtena z disku do  systému======================================================");
 
             printInfo(restaurantManager);
 
         } catch (RestaurantException e){
             System.err.println(e.getMessage());
         }
-        System.out.println("********");
-        System.out.println("* Done *");
-        System.out.println("********");
+        System.out.println("**************");
+        System.out.println("**  Hotovo  **");
+        System.out.println("**************");
 
     }
 
@@ -47,17 +47,17 @@ public class Restaurant {
         System.out.println(restaurantManager.exportOrdersPerTable(2));
 
         System.out.println();
-        System.out.println("Number of meals: " + restaurantManager.getNumberOfMeals());
-        System.out.println("Total number of orders: " + restaurantManager.getTotalNumberOfOrders());
-        System.out.println("Number of unfinished orders: " + restaurantManager.getNumberOfUnfinishedOrders());
+        System.out.println("Počet jídel: " + restaurantManager.getNumberOfMeals());
+        System.out.println("Celkový počet obhednávek: " + restaurantManager.getTotalNumberOfOrders());
+        System.out.println("Počet nevyřízených objednávek: " + restaurantManager.getNumberOfUnfinishedOrders());
 
         System.out.println();
-        System.out.println("Orders sorted by ordered time:");
+        System.out.println("Objednávky setříděné podle času:");
         restaurantManager.printSortedOrderList();
-        System.out.println("Average fulfilment time: " + restaurantManager.getAverageFulfilmentTime());
+        System.out.println("Průměrný čas vyřízení objednávky: " + restaurantManager.getAverageFulfilmentTime());
 
         System.out.println();
-        System.out.println("Meals ordered today: ");
+        System.out.println("Jídla objednaná dnes: ");
         restaurantManager.printMealsOrderedToday();
         System.out.println();
     }

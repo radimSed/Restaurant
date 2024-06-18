@@ -7,7 +7,6 @@ public class Recipe {
     private BigDecimal price;
     private int preparationTime;
     private String pictureName;
-    GlobalVariables globalVars = new GlobalVariables();
 
     public Recipe(String title, BigDecimal price, int preparationTime, String pictureName) throws RestaurantException{
         this.title = title;
@@ -33,7 +32,7 @@ public class Recipe {
 
     public void setPreparationTime(int preparationTime) throws RestaurantException{
         if (preparationTime < 0){
-            throw new RestaurantException("Preparation time must be larger than 0. Recipe was not created.");
+            throw new RestaurantException("Doba přípravy musí být větší než 0. Recept nebyl vytvořen.");
         } else {
             this.preparationTime = preparationTime;
         }
