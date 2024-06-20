@@ -1,0 +1,1 @@
+Muj discord je radimsed
